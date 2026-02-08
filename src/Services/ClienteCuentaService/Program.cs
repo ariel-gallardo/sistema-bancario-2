@@ -6,6 +6,8 @@ using ClienteCuentaService.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.AddServiceDiscovery();
+
 builder.Services.AddBankingSwagger("Cliente & Cuenta Service");
 builder.Services.AddBankingCors();
 builder.Services.AddSqlServerFactory();
@@ -52,5 +54,6 @@ app.MapGet("/clientes/{clienteId:int}/resumen", async (int clienteId, IClienteCu
 
 app.MapGet("/health", () => Results.Ok(new { status = "ok" }))
    .AllowAnonymous();
+
 
 app.Run();

@@ -1,5 +1,4 @@
 using System.Security.Claims;
-using System.Threading;
 using AuthService.Repositories;
 using AuthService.Services;
 using BankingApp.GrpcContracts.Logging;
@@ -9,6 +8,8 @@ using BankingApp.SharedKernel.Middleware;
 using BankingApp.SharedKernel.Responses;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddServiceDiscovery();
 
 builder.Services.AddBankingSwagger("Auth Service");
 builder.Services.AddBankingCors();

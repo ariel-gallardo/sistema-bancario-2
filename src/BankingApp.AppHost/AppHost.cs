@@ -1,4 +1,3 @@
-using System.IO;
 using Projects;
 
 var builder = DistributedApplication.CreateBuilder(args);
@@ -31,32 +30,43 @@ var clientesConnectionString = BuildSqlConnectionString("ClienteCuentaDb", "clie
 var logging = builder.AddProject<LoggingService>("logging-service")
 	.WithEnvironment("ServiceInfo__Name", "LoggingService");
 
-builder.AddProject<AuthService>("auth-service")
+var authService = builder.AddProject<AuthService>("auth-service")
 	.WithReference(logging)
 	.WithReference(authDb)
     .WaitFor(authDb)
     .WithEnvironment("ConnectionStrings__SqlServer", authConnectionString)
 	.WithEnvironment("ServiceInfo__Name", "AuthService");
 
-builder.AddProject<ClienteCuentaService>("clientes-service")
+var clientesService = builder.AddProject<ClienteCuentaService>("clientes-service")
 	.WithReference(logging)
 	.WithReference(clientesDb)
     .WaitFor(clientesDb)
     .WithEnvironment("ConnectionStrings__SqlServer", clientesConnectionString)
 	.WithEnvironment("ServiceInfo__Name", "ClienteCuentaService");
 
-builder.AddProject<TarjetaService>("tarjetas-service")
+var tarjetasService = builder.AddProject<TarjetaService>("tarjetas-service")
 	.WithReference(logging)
 	.WithReference(tarjetaDb)
     .WaitFor(tarjetaDb)
     .WithEnvironment("ConnectionStrings__SqlServer", tarjetaDb.Resource.ConnectionStringExpression)
 	.WithEnvironment("ServiceInfo__Name", "TarjetaService");
 
-builder.AddProject<MovimientoService>("movimientos-service")
+var movimientosService = builder.AddProject<MovimientoService>("movimientos-service")
 	.WithReference(logging)
 	.WithReference(movimientoDb)
 	.WaitFor(movimientoDb)
 	.WithEnvironment("ConnectionStrings__SqlServer", movimientoDb.Resource.ConnectionStringExpression)
 	.WithEnvironment("ServiceInfo__Name", "MovimientoService");
+
+builder.AddJavaScriptApp("frontend", "../../frontend", "dev")
+	.WithReference(authService)
+	.WithReference(clientesService)
+	.WithReference(tarjetasService)
+	.WithReference(movimientosService)
+	.WithEnvironment("VITE_AUTH_URL", "http://auth-service")
+	.WithEnvironment("VITE_CLIENTES_URL", "http://clientes-service")
+	.WithEnvironment("VITE_TARJETAS_URL", "http://tarjetas-service")
+	.WithEnvironment("VITE_MOVIMIENTOS_URL", "http://movimientos-service")
+	.WithEnvironment("VITE_LOGS_URL", "http://logging-service/graphql");
 
 builder.Build().Run();

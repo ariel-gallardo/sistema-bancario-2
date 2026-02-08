@@ -6,6 +6,8 @@ using TarjetaService.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.AddServiceDiscovery();
+
 builder.Services.AddBankingSwagger("Tarjeta Service");
 builder.Services.AddBankingCors();
 builder.Services.AddSqlServerFactory();

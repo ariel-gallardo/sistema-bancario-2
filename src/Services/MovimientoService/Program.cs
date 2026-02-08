@@ -5,6 +5,8 @@ using MovimientoService.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.AddServiceDiscovery();
+
 builder.Services.AddBankingSwagger("Movimiento Service");
 builder.Services.AddBankingCors();
 builder.Services.AddSqlServerFactory();
