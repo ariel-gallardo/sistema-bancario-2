@@ -1,4 +1,4 @@
-DECLARE @DbName sysname = N'TarjetasDb';
+DECLARE @DbName sysname = N'TarjetaDb';
 IF DB_ID(@DbName) IS NULL
 BEGIN
     EXEC('CREATE DATABASE [' + @DbName + N']');

@@ -3,7 +3,7 @@ const fallbackUrls = {
   clientes: 'http://localhost:5102',
   tarjetas: 'http://localhost:5103',
   movimientos: 'http://localhost:5104',
-  logs: 'http://localhost:5105/graphql',
+  logs: 'http://localhost:5105',
 };
 
 export const apiConfig = {

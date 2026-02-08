@@ -10,8 +10,13 @@ public sealed class LogQueries
     public LogPage GetLogs(
         [Service] ILogStore store,
         int page = 1,
-        int pageSize = 25)
+        int pageSize = 25,
+        string? serviceName = null,
+        string? severity = null,
+        string? search = null,
+        string? correlationId = null,
+        string? requestPath = null)
     {
-        return store.GetPage(page, pageSize);
+        return store.GetPage(page, pageSize, serviceName, severity, search, correlationId, requestPath);
     }
 }

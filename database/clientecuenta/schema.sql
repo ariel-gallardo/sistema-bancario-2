@@ -1,4 +1,4 @@
-DECLARE @DbName sysname = N'ClientesCuentaDb';
+DECLARE @DbName sysname = N'ClienteCuentaDb';
 IF DB_ID(@DbName) IS NULL
 BEGIN
     EXEC('CREATE DATABASE [' + @DbName + N']');

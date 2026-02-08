@@ -11,11 +11,9 @@ public static class LoggingClientExtensions
 {
     public static IServiceCollection AddGrpcLoggingClient(this IServiceCollection services, IConfiguration configuration)
     {
-        var discoveredEndpoint = configuration.GetServiceUri("logging-service")
-            ?? configuration.GetServiceUri("logging-service", binding: "https");
 
         var configuredEndpoint = configuration["Logging:GrpcEndpoint"] ?? "https://localhost:7198";
-        var targetUri = discoveredEndpoint ?? new Uri(configuredEndpoint);
+        var targetUri = new Uri("http://logging-service");
 
         services.AddGrpcClient<LogCollector.LogCollectorClient>(options =>
         {

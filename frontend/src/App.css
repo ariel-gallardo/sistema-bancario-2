@@ -294,6 +294,14 @@
   min-height: 100%;
 }
 
+.admin-filters-panel {
+  padding: 1.5rem;
+  border-radius: 18px;
+  border: 1px solid rgba(55, 183, 195, 0.25);
+  background: rgba(8, 12, 28, 0.85);
+  backdrop-filter: blur(8px);
+}
+
 .admin-metric-card {
   padding: 1.5rem;
   border-radius: 20px;
