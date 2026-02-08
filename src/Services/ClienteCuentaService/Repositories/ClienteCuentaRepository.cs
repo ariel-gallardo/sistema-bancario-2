@@ -24,28 +24,30 @@ public sealed class ClienteCuentaRepository : IClienteCuentaRepository
     {
         using var connection = _connectionFactory.CreateConnection();
 
-        var parameters = new DynamicParameters();
-        parameters.Add("@ClienteId", clienteId);
-
-        using var multi = await connection.QueryMultipleAsync(
-            "dbo.usp_GetClienteResumen",
-            param: parameters,
-            commandType: CommandType.StoredProcedure);
-
-        var saldo = await multi.ReadFirstOrDefaultAsync<SaldoResult>();
-        var movimientos = (await multi.ReadAsync<MovimientoResumenDto>()).ToList();
+        var saldo = await connection.QueryFirstOrDefaultAsync<SaldoResult>(new CommandDefinition(
+            "dbo.usp_GetSaldoCuentaPrincipal",
+            new { ClienteId = clienteId },
+            commandType: CommandType.StoredProcedure,
+            cancellationToken: cancellationToken));
 
         if (saldo is null)
         {
             return null;
         }
 
+        var movimientos = (await connection.QueryAsync<MovimientoResumenDto>(new CommandDefinition(
+            "MovimientoDb.dbo.usp_GetUltimosMovimientosTarjetaPrincipal",
+            new { ClienteId = clienteId, TopMovimientos = 5 },
+            commandType: CommandType.StoredProcedure,
+            cancellationToken: cancellationToken))).ToList();
+
         return new ResumenClienteDto
         {
             SaldoCuentaPrincipal = saldo.SaldoCuentaPrincipal,
-            Movimientos = movimientos
+            Movimientos = movimientos,
+            TieneTarjetaPrincipal = saldo.TieneTarjetaPrincipal
         };
     }
 
-    private sealed record SaldoResult(decimal SaldoCuentaPrincipal);
+    private sealed record SaldoResult(decimal SaldoCuentaPrincipal, bool TieneTarjetaPrincipal);
 }

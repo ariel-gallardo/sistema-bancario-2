@@ -72,16 +72,24 @@ export const fetchDashboardData = createAsyncThunk<
         { headers },
       );
       tarjeta = tarjetaResponse.data;
-
-      const movimientosResponse = await axios.get<MovimientoResponse[]>(
-        `${apiConfig.movimientos}/movimientos/tarjetas/${tarjeta.id}?take=5`,
-        { headers },
-      );
-      movimientos = movimientosResponse.data;
     } catch (cardError) {
       if (!axios.isAxiosError(cardError) || cardError.response?.status !== 404) {
         throw cardError;
       }
+      tarjeta = null;
+    }
+
+    try {
+      const movimientosResponse = await axios.get<MovimientoResponse[]>(
+        `${apiConfig.movimientos}/movimientos/clientes/${clienteId}?take=5`,
+        { headers },
+      );
+      movimientos = movimientosResponse.data;
+    } catch (movError) {
+      if (!axios.isAxiosError(movError) || movError.response?.status !== 404) {
+        throw movError;
+      }
+      movimientos = [];
     }
 
     return {

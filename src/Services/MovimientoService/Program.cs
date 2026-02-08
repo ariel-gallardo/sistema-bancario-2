@@ -24,17 +24,17 @@ app.UseAuthentication();
 app.UseAuthorization();
 app.UseMiddleware<ErrorHandlingMiddleware>();
 
-app.MapGet("/movimientos/tarjetas/{tarjetaId:int}", async (int tarjetaId, int? take, IMovimientoRepository repository, CancellationToken cancellationToken) =>
+app.MapGet("/movimientos/clientes/{clienteId:int}", async (int clienteId, int? take, IMovimientoRepository repository, CancellationToken cancellationToken) =>
 {
     var limit = Math.Clamp(take ?? 5, 1, 50);
-    var movimientos = await repository.GetByTarjetaAsync(tarjetaId, limit, cancellationToken);
+    var movimientos = await repository.GetByClienteAsync(clienteId, limit, cancellationToken);
     return Results.Ok(movimientos);
 })
 .RequireAuthorization()
-.WithName("GetMovimientosPorTarjeta")
+.WithName("GetMovimientosPorCliente")
 .WithOpenApi(op =>
 {
-    op.Summary = "Obtiene los últimos movimientos de la tarjeta";
+    op.Summary = "Obtiene los últimos movimientos de la tarjeta principal del cliente";
     op.Parameters[1].Description = "Cantidad máxima de movimientos (por defecto 5)";
     return op;
 });

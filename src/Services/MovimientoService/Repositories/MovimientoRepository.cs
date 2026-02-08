@@ -6,7 +6,7 @@ namespace MovimientoService.Repositories;
 
 public interface IMovimientoRepository
 {
-    Task<IReadOnlyCollection<MovimientoDto>> GetByTarjetaAsync(int tarjetaId, int take, CancellationToken cancellationToken);
+    Task<IReadOnlyCollection<MovimientoDto>> GetByClienteAsync(int clienteId, int take, CancellationToken cancellationToken);
 }
 
 public sealed class MovimientoRepository : IMovimientoRepository
@@ -18,20 +18,14 @@ public sealed class MovimientoRepository : IMovimientoRepository
         _connectionFactory = connectionFactory;
     }
 
-    public async Task<IReadOnlyCollection<MovimientoDto>> GetByTarjetaAsync(int tarjetaId, int take, CancellationToken cancellationToken)
+    public async Task<IReadOnlyCollection<MovimientoDto>> GetByClienteAsync(int clienteId, int take, CancellationToken cancellationToken)
     {
         using var connection = _connectionFactory.CreateConnection();
 
-        const string sql = """
-        SELECT TOP (@Take) Id, TarjetaId, Fecha, Monto, Descripcion
-        FROM Movimientos
-        WHERE TarjetaId = @TarjetaId
-        ORDER BY Fecha DESC;
-        """;
-
         var movimientos = await connection.QueryAsync<MovimientoDto>(new CommandDefinition(
-            sql,
-            new { TarjetaId = tarjetaId, Take = take },
+            "dbo.usp_GetUltimosMovimientosTarjetaPrincipal",
+            new { ClienteId = clienteId, TopMovimientos = take },
+            commandType: CommandType.StoredProcedure,
             cancellationToken: cancellationToken));
 
         return movimientos.ToList();

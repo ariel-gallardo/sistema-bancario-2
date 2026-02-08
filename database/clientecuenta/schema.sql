@@ -56,6 +56,37 @@ SET ANSI_NULLS ON;
 GO
 SET QUOTED_IDENTIFIER ON;
 GO
+CREATE OR ALTER PROCEDURE dbo.usp_GetSaldoCuentaPrincipal
+    @ClienteId INT
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    SELECT TOP 1
+        c.Id AS CuentaId,
+        c.ClienteId,
+        c.Saldo AS SaldoCuentaPrincipal,
+        CASE
+            WHEN EXISTS (
+                SELECT 1
+                FROM TarjetaDb.dbo.Tarjetas AS t WITH (NOLOCK)
+                WHERE t.CuentaId = c.Id
+                  AND t.EsPrincipal = 1
+            )
+            THEN CAST(1 AS BIT)
+            ELSE CAST(0 AS BIT)
+        END AS TieneTarjetaPrincipal
+    FROM dbo.Cuentas AS c WITH (NOLOCK)
+    WHERE c.ClienteId = @ClienteId
+      AND c.EsCuentaPrincipal = 1
+    ORDER BY c.Id DESC;
+END;
+GO
+
+SET ANSI_NULLS ON;
+GO
+SET QUOTED_IDENTIFIER ON;
+GO
 CREATE OR ALTER PROCEDURE dbo.usp_GetClienteResumen
     @ClienteId INT
 AS
