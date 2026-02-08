@@ -1,0 +1,23 @@
+<Project Sdk="Aspire.AppHost.Sdk/13.1.0">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <UserSecretsId>3d24b724-71b3-44a3-a7c6-c1d1a08b15aa</UserSecretsId>
+  </PropertyGroup>
+  
+  <ItemGroup>
+    <PackageReference Include="Aspire.Hosting.SqlServer" Version="13.1.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Services\AuthService\AuthService.csproj" />
+    <ProjectReference Include="..\Services\ClienteCuentaService\ClienteCuentaService.csproj" />
+    <ProjectReference Include="..\Services\TarjetaService\TarjetaService.csproj" />
+    <ProjectReference Include="..\Services\MovimientoService\MovimientoService.csproj" />
+    <ProjectReference Include="..\Services\LoggingService\LoggingService.csproj" />
+  </ItemGroup>
+
+</Project>

@@ -1,0 +1,24 @@
+syntax = "proto3";
+
+option csharp_namespace = "BankingApp.Logging";
+
+package banking.logging;
+
+message LogRequest {
+  string serviceName = 1;
+  string requestPath = 2;
+  string message = 3;
+  string stackTrace = 4;
+  string severity = 5;
+  string correlationId = 6;
+  string payload = 7;
+}
+
+message LogResponse {
+  bool accepted = 1;
+  string error = 2;
+}
+
+service LogCollector {
+  rpc SendErrorLog (LogRequest) returns (LogResponse);
+}
