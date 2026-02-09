@@ -10,7 +10,7 @@ using Microsoft.Extensions.Logging;
 
 namespace ClienteCuentaService.Tests.Infrastructure;
 
-internal sealed class ClienteCuentaWebApplicationFactory : WebApplicationFactory<Program>
+public sealed class ClienteCuentaWebApplicationFactory : WebApplicationFactory<Program>
 {
     public InMemoryClienteCuentaRepository Repository { get; } = new();
 
@@ -26,7 +26,7 @@ internal sealed class ClienteCuentaWebApplicationFactory : WebApplicationFactory
     }
 }
 
-internal sealed class InMemoryClienteCuentaRepository : IClienteCuentaRepository
+public sealed class InMemoryClienteCuentaRepository : IClienteCuentaRepository
 {
     private readonly Dictionary<int, ClienteResumen> _store = new();
 
