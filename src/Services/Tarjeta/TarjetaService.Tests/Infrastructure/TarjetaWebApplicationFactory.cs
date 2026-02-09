@@ -11,7 +11,7 @@ using TarjetaService.Repositories;
 
 namespace TarjetaService.Tests.Infrastructure;
 
-internal sealed class TarjetaWebApplicationFactory : WebApplicationFactory<Program>
+public sealed class TarjetaWebApplicationFactory : WebApplicationFactory<Program>
 {
     public InMemoryTarjetaRepository Repository { get; } = new();
 

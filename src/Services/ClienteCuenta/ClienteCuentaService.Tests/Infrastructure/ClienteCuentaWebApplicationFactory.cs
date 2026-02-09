@@ -10,7 +10,7 @@ using Microsoft.Extensions.Logging;
 
 namespace ClienteCuentaService.Tests.Infrastructure;
 
-internal sealed class ClienteCuentaWebApplicationFactory : WebApplicationFactory<Program>
+public sealed class ClienteCuentaWebApplicationFactory : WebApplicationFactory<Program>
 {
     public InMemoryClienteCuentaRepository Repository { get; } = new();
 

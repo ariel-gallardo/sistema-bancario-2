@@ -11,7 +11,7 @@ using MovimientoService.Repositories;
 
 namespace MovimientoService.Tests.Infrastructure;
 
-internal sealed class MovimientoWebApplicationFactory : WebApplicationFactory<Program>
+public sealed class MovimientoWebApplicationFactory : WebApplicationFactory<Program>
 {
     public InMemoryMovimientoRepository Repository { get; } = new();
 
