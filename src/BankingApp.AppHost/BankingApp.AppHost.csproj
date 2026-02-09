@@ -9,15 +9,17 @@
   </PropertyGroup>
   
   <ItemGroup>
+    <PackageReference Include="Aspire.Hosting.JavaScript" Version="13.1.0" />
     <PackageReference Include="Aspire.Hosting.SqlServer" Version="13.1.0" />
+    <PackageReference Include="CommunityToolkit.Aspire.Hosting.JavaScript.Extensions" Version="13.1.1" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Services\AuthService\AuthService.csproj" />
-    <ProjectReference Include="..\Services\ClienteCuentaService\ClienteCuentaService.csproj" />
-    <ProjectReference Include="..\Services\TarjetaService\TarjetaService.csproj" />
-    <ProjectReference Include="..\Services\MovimientoService\MovimientoService.csproj" />
-    <ProjectReference Include="..\Services\LoggingService\LoggingService.csproj" />
+    <ProjectReference Include="..\Services\Auth\AuthService\AuthService.csproj" />
+    <ProjectReference Include="..\Services\ClienteCuenta\ClienteCuentaService\ClienteCuentaService.csproj" />
+    <ProjectReference Include="..\Services\Tarjeta\TarjetaService\TarjetaService.csproj" />
+    <ProjectReference Include="..\Services\Movimiento\MovimientoService\MovimientoService.csproj" />
+    <ProjectReference Include="..\Services\Logging\LoggingService\LoggingService.csproj" />
   </ItemGroup>
 
 </Project>

@@ -25,6 +25,19 @@ CREATE TABLE dbo.Usuarios
 );
 GO
 
+IF NOT EXISTS (
+    SELECT 1
+    FROM sys.indexes
+    WHERE name = 'IX_Usuarios_IsActive'
+      AND object_id = OBJECT_ID('dbo.Usuarios')
+)
+BEGIN
+    CREATE NONCLUSTERED INDEX IX_Usuarios_IsActive
+        ON dbo.Usuarios (IsActive)
+        INCLUDE (Username, Roles, ClienteId);
+END;
+GO
+
 MERGE dbo.Usuarios AS target
 USING (VALUES
     ('maria', HASHBYTES('SHA2_256', 'P@ssw0rd'), 'cliente,vip', 1, 1),
