@@ -27,7 +27,7 @@ public sealed class TarjetaWebApplicationFactory : WebApplicationFactory<Program
     }
 }
 
-internal sealed class InMemoryTarjetaRepository : ITarjetaRepository
+public sealed class InMemoryTarjetaRepository : ITarjetaRepository
 {
     private readonly List<Tarjeta> _tarjetas;
     private readonly Dictionary<int, int> _principalPorCliente;

@@ -10,7 +10,7 @@ using Microsoft.Extensions.Logging;
 
 namespace AuthService.Tests.Infrastructure;
 
-internal sealed class AuthWebApplicationFactory : WebApplicationFactory<Program>
+public sealed class AuthWebApplicationFactory : WebApplicationFactory<Program>
 {
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {

@@ -27,7 +27,7 @@ public sealed class MovimientoWebApplicationFactory : WebApplicationFactory<Prog
     }
 }
 
-internal sealed class InMemoryMovimientoRepository : IMovimientoRepository
+public sealed class InMemoryMovimientoRepository : IMovimientoRepository
 {
     private readonly Dictionary<int, List<Movimiento>> _store = new();
 

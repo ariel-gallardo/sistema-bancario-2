@@ -26,7 +26,7 @@ public sealed class ClienteCuentaWebApplicationFactory : WebApplicationFactory<P
     }
 }
 
-internal sealed class InMemoryClienteCuentaRepository : IClienteCuentaRepository
+public sealed class InMemoryClienteCuentaRepository : IClienteCuentaRepository
 {
     private readonly Dictionary<int, ClienteResumen> _store = new();
 
