@@ -30,6 +30,29 @@ BEGIN
 END;
 GO
 
+IF COL_LENGTH('dbo.Cuentas', 'EsActiva') IS NULL
+BEGIN
+    ALTER TABLE dbo.Cuentas
+    ADD EsActiva BIT NOT NULL CONSTRAINT DF_Cuentas_EsActiva DEFAULT(1) WITH VALUES;
+END;
+GO
+
+IF EXISTS (
+    SELECT 1
+    FROM sys.indexes
+    WHERE name = 'IX_Cuentas_Cliente_Principal'
+      AND object_id = OBJECT_ID('dbo.Cuentas')
+)
+BEGIN
+    DROP INDEX IX_Cuentas_Cliente_Principal ON dbo.Cuentas;
+END;
+GO
+
+CREATE NONCLUSTERED INDEX IX_Cuentas_Cliente_Principal
+    ON dbo.Cuentas (ClienteId, EsCuentaPrincipal, EsActiva)
+    INCLUDE (Saldo);
+GO
+
 MERGE dbo.Clientes AS target
 USING (VALUES
     (1, 'María González'),
@@ -42,14 +65,14 @@ GO
 
 MERGE dbo.Cuentas AS target
 USING (VALUES
-    (101, 1, 157500.25, 1),
-    (102, 1, 25300.75, 0),
-    (201, 2, 80200.00, 1)
-) AS source (Id, ClienteId, Saldo, EsCuentaPrincipal)
+    (101, 1, 157500.25, 1, 1),
+    (102, 1, 25300.75, 0, 1),
+    (201, 2, 80200.00, 1, 1)
+) AS source (Id, ClienteId, Saldo, EsCuentaPrincipal, EsActiva)
 ON target.Id = source.Id
-WHEN MATCHED THEN UPDATE SET ClienteId = source.ClienteId, Saldo = source.Saldo, EsCuentaPrincipal = source.EsCuentaPrincipal
-WHEN NOT MATCHED THEN INSERT (Id, ClienteId, Saldo, EsCuentaPrincipal)
-VALUES (source.Id, source.ClienteId, source.Saldo, source.EsCuentaPrincipal);
+WHEN MATCHED THEN UPDATE SET ClienteId = source.ClienteId, Saldo = source.Saldo, EsCuentaPrincipal = source.EsCuentaPrincipal, EsActiva = source.EsActiva
+WHEN NOT MATCHED THEN INSERT (Id, ClienteId, Saldo, EsCuentaPrincipal, EsActiva)
+VALUES (source.Id, source.ClienteId, source.Saldo, source.EsCuentaPrincipal, source.EsActiva);
 GO
 
 SET ANSI_NULLS ON;
@@ -78,7 +101,8 @@ BEGIN
         END AS TieneTarjetaPrincipal
     FROM dbo.Cuentas AS c WITH (NOLOCK)
     WHERE c.ClienteId = @ClienteId
-      AND c.EsCuentaPrincipal = 1
+            AND c.EsCuentaPrincipal = 1
+            AND c.EsActiva = 1
     ORDER BY c.Id DESC;
 END;
 GO
@@ -96,7 +120,7 @@ BEGIN
     DECLARE @CuentaPrincipalId INT = (
         SELECT TOP 1 Id
         FROM dbo.Cuentas
-        WHERE ClienteId = @ClienteId AND EsCuentaPrincipal = 1
+        WHERE ClienteId = @ClienteId AND EsCuentaPrincipal = 1 AND EsActiva = 1
         ORDER BY Id DESC
     );
 
@@ -109,7 +133,7 @@ BEGIN
 
     SELECT Saldo AS SaldoCuentaPrincipal
     FROM dbo.Cuentas
-    WHERE Id = @CuentaPrincipalId;
+    WHERE Id = @CuentaPrincipalId AND EsActiva = 1;
 
     DECLARE @TarjetaPrincipalId INT = (
         SELECT TOP 1 t.Id

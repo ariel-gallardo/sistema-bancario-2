@@ -2,6 +2,7 @@ import { createAsyncThunk, createSlice, type PayloadAction } from '@reduxjs/tool
 import axios from 'axios';
 import { apiConfig } from '../../config/api';
 import type { LoginResponse } from '../../types/api';
+import { clearAuthState, loadAuthState, saveAuthState, type StoredAuthState } from '../../utils/authStorage';
 
 export interface LoginPayload {
   username: string;
@@ -24,11 +25,49 @@ interface AuthState {
   error?: string;
 }
 
-const initialState: AuthState = {
+const createDefaultState = (): AuthState => ({
   token: null,
+  username: undefined,
   clienteId: null,
   roles: [],
+  expiresAt: undefined,
   status: 'idle',
+  error: undefined,
+});
+
+const persistedAuth = loadAuthState();
+
+const initialState: AuthState = (() => {
+  const baseState = createDefaultState();
+  if (!persistedAuth) {
+    return baseState;
+  }
+
+  return {
+    ...baseState,
+    token: persistedAuth.token,
+    username: persistedAuth.username,
+    clienteId: persistedAuth.clienteId ?? null,
+    roles: persistedAuth.roles ?? [],
+    expiresAt: persistedAuth.expiresAt,
+  };
+})();
+
+const persistState = (state: AuthState) => {
+  if (!state.token) {
+    clearAuthState();
+    return;
+  }
+
+  const payload: StoredAuthState = {
+    token: state.token,
+    username: state.username,
+    clienteId: state.clienteId ?? null,
+    roles: state.roles,
+    expiresAt: state.expiresAt,
+  };
+
+  saveAuthState(payload);
 };
 
 export const login = createAsyncThunk<
@@ -67,9 +106,13 @@ const authSlice = createSlice({
   name: 'auth',
   initialState,
   reducers: {
-    logout: () => initialState,
+    logout: () => {
+      clearAuthState();
+      return createDefaultState();
+    },
     setClienteId: (state, action: PayloadAction<number | null>) => {
       state.clienteId = action.payload;
+      persistState(state);
     },
   },
   extraReducers: (builder) => {
@@ -85,6 +128,7 @@ const authSlice = createSlice({
         state.roles = action.payload.roles;
         state.username = action.payload.username;
         state.clienteId = action.payload.clienteId;
+        persistState(state);
       })
       .addCase(login.rejected, (state, action) => {
         state.status = 'failed';
@@ -94,6 +138,7 @@ const authSlice = createSlice({
         state.roles = [];
         state.expiresAt = undefined;
         state.clienteId = null;
+        clearAuthState();
       });
   },
 });

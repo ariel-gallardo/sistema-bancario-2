@@ -21,6 +21,19 @@ BEGIN
 END;
 GO
 
+IF NOT EXISTS (
+    SELECT 1
+    FROM sys.indexes
+    WHERE name = 'IX_Movimientos_Tarjeta_Fecha'
+      AND object_id = OBJECT_ID('dbo.Movimientos')
+)
+BEGIN
+    CREATE NONCLUSTERED INDEX IX_Movimientos_Tarjeta_Fecha
+        ON dbo.Movimientos (TarjetaId, Fecha DESC)
+        INCLUDE (Monto, Descripcion);
+END;
+GO
+
 MERGE dbo.Movimientos AS target
 USING (VALUES
     (1, 1001, '2024-04-20', -9500.00, 'Compra supermercado'),
@@ -67,7 +80,8 @@ BEGIN
         @CuentaPrincipalId = c.Id
     FROM ClienteCuentaDb.dbo.Cuentas AS c WITH (NOLOCK)
     WHERE c.ClienteId = @ClienteId
-      AND c.EsCuentaPrincipal = 1
+            AND c.EsCuentaPrincipal = 1
+            AND c.EsActiva = 1
     ORDER BY c.Id DESC;
 
     IF @CuentaPrincipalId IS NULL
